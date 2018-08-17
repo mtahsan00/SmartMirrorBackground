@@ -109,7 +109,7 @@ class Messages(Frame):
         self.messageLable.pack(side=BOTTOM, anchor=S)
         self.get_messages()
     def get_messages(self):
-        with open('Hourly Messages.csv', 'rU') as csv_file:
+        with open('Hourly Messages.csv', 'rU') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
             reader = csv.reader(csv_file)
             messages = []
             for line in reader:
