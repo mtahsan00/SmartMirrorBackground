@@ -64,15 +64,15 @@ class Weather(Frame):
         self.forecastLbl = Label(self, font=('Helvetica', 18), fg="white", bg="black")
         self.forecastLbl.pack(side=TOP, anchor=W)
         #Sunset creation
-        self.sunsetLbl = Label(self, font=('Helvetica', 18), fg="white", bg="black")
+        self.sunsetLbl = Label(self, font=('Helvetica', 17), fg="white", bg="black")
         self.sunsetLbl.pack(side=TOP, anchor=W)
         #City Lable creation
-        self.cityLbl = Label(self, text="Maple Grove,MN", font=('Helvetica', 18), fg="white", bg="black")
+        self.cityLbl = Label(self, text="Minneapolis,MN", font=('Helvetica', 18), fg="white", bg="black")
         self.cityLbl.pack(side=TOP, anchor=W)
 
         self.get_weather()
     def get_weather(self):
-        api_address="http://api.openweathermap.org/data/2.5/weather?appid=0267fed153829b1bcacdf19682b24b4d&q=Maple%20Grove&units=imperial"
+        api_address="http://api.openweathermap.org/data/2.5/weather?appid=0267fed153829b1bcacdf19682b24b4d&q=Minneapolis&units=imperial"
         jason_data=requests.get(api_address).json()
         weatherType = jason_data['weather'][0]["description"]
         degree_sign= u'\N{DEGREE SIGN}'
@@ -109,19 +109,19 @@ class Messages(Frame):
         self.messageLable.pack(side=BOTTOM, anchor=S)
         self.get_messages()
     def get_messages(self):
-        with open('Hourly Messages.csv', 'rU') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
-            reader = csv.reader(csv_file)
-            messages = []
-            for line in reader:
-                line="".join(line)
-                messages.append(line)
-            if "hello" != self.message:
-                self.message = messages[self.messageNumber]
-                rmMess = messages[self.messageNumber]
-                self.messageLable.config(text=rmMess)
-                self.messageNumber +=1
-                if self.messageNumber == 4:
-                    self.messageNumber = 0
+      #  with open('Hourly Messages.csv', 'rU') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+       #     reader = csv.reader(csv_file)
+        #    messages = []
+         #   for line in reader:
+          #      line="".join(line)
+           #     messages.append(line)
+           # if "hello" != self.message:
+            #    self.message = messages[self.messageNumber]
+             #   rmMess = messages[self.messageNumber]
+              #  self.messageLable.config(text=rmMess)
+               # self.messageNumber +=1
+               # if self.messageNumber == 4:
+                #    self.messageNumber = 0
             self.after(50000, self.get_messages)
 
 class Calander(Frame):
@@ -135,16 +135,16 @@ class Calander(Frame):
         self.cFrame = Frame(self, bg="black",relief="groove",bd=5)
         self.cFrame.pack(side=RIGHT, anchor=N)
         #Date labele Init
-        self.dateLable = Label(self.cFrame, font=('Times New Roman', 26), fg="white", bg="black")
+        self.dateLable = Label(self.cFrame, font=('Times New Roman', 18), fg="white", bg="black")
         self.dateLable.pack(side=LEFT, anchor=E)
         #Time Lable init
-        self.timeLable = Label(self.cFrame, font=('Times New Roman', 26), fg="white", bg="black")
+        self.timeLable = Label(self.cFrame, font=('Times New Roman', 18), fg="white", bg="black")
         self.timeLable.pack(side=LEFT, anchor=E)
         #Calander Labele init
-        self.calanderLable = Label(self.cFrame, font=('Times New Roman', 26), fg="white", bg="black")
+        self.calanderLable = Label(self.cFrame, font=('Times New Roman', 18), fg="white", bg="black")
         self.calanderLable.pack(side=LEFT, anchor=E)
         #location lable init
-        self.locationLable = Label(self.cFrame, font=('Times New Roman', 26), fg="white", bg="black")
+        self.locationLable = Label(self.cFrame, font=('Times New Roman', 18), fg="white", bg="black")
         self.locationLable.pack(side=RIGHT, anchor=E)
         self.getCalander()
     def getCalander(self):
