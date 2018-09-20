@@ -259,6 +259,8 @@ class FullScreen():
 # clock()
 if __name__ == '__main__':
     w = FullScreen()
+    w.tk.geometry("1080x1700")
+    w.tk.attributes("-type","dock")
     w.tk.mainloop()
 #
 # root.configure(background='black')
