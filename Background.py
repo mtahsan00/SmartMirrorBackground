@@ -7,6 +7,7 @@ import datetime
 import time
 import requests
 import csv
+import sys
 
 # root = Tk()
 #
@@ -109,7 +110,7 @@ class Messages(Frame):
         self.messageLable.pack(side=TOP, anchor=N)
         self.get_messages()
     def get_messages(self):
-        with open('Hourly_Messages.csv', 'rU') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+        with open('Hourly_MessagesH.csv', 'rU') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
             reader = csv.reader(csv_file)
             messages = []
             for line in reader:
@@ -122,7 +123,7 @@ class Messages(Frame):
                 self.messageNumber +=1
                 if self.messageNumber == 4:
                     self.messageNumber = 0
-            self.after(50000, self.get_messages)
+            self.after(43200000, self.get_messages)
 
 class Calander(Frame):
     def __init__(self,parent,*args,**kwargs):
