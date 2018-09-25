@@ -124,7 +124,7 @@ class Messages(Frame):
                     self.messageNumber = 0
             self.after(50000, self.get_messages)
 
-class Calander(Frame):
+class CalanderMuhammad(Frame):
     def __init__(self,parent,*args,**kwargs):
         Frame.__init__(self,parent,bg='black')
         self.calanderItem = ''
@@ -228,6 +228,110 @@ class Calander(Frame):
         timeFinal1 = timeGet + "-" + timeEndy + ","
         return timeFinal1
 
+class CalanderIan(Frame):
+    def __init__(self,parent,*args,**kwargs):
+        Frame.__init__(self,parent,bg='black')
+        self.calanderItem = ''
+        self.locationName = ''
+        self.timeItem = ''
+        self.dateItem = ''
+        #Calander Frame init
+        self.cFrame = Frame(self, bg="black",relief="groove",bd=5)
+        self.cFrame.pack(side=RIGHT, anchor=N)
+        #Date labele Init
+        self.dateLable = Label(self.cFrame, font=('Times New Roman', 18), fg="white", bg="black")
+        self.dateLable.pack(side=LEFT, anchor=E)
+        #Time Lable init
+        self.timeLable = Label(self.cFrame, font=('Times New Roman', 18), fg="white", bg="black")
+        self.timeLable.pack(side=LEFT, anchor=E)
+        #Calander Labele init
+        self.calanderLable = Label(self.cFrame, font=('Times New Roman', 18), fg="white", bg="black")
+        self.calanderLable.pack(side=LEFT, anchor=E)
+        #location lable init
+        self.locationLable = Label(self.cFrame, font=('Times New Roman', 18), fg="white", bg="black")
+        self.locationLable.pack(side=RIGHT, anchor=E)
+        self.getCalander()
+    def getCalander(self):
+        SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
+        store = oauth_file.Storage('tokenPersonalIan.json')
+        creds = store.get()
+        if not creds or creds.invalid:
+            flow = client.flow_from_clientsecrets('credentialIan.json', SCOPES)
+            creds = tools.run_flow(flow, store)
+        service = build('calendar', 'v3', http=creds.authorize(Http()))
+        # Call the Calendar API
+        now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+        print('Getting Event(s)')
+        events_result = service.events().list(calendarId='primary', timeMin=now,
+                                              maxResults=4, singleEvents=True,
+                                              orderBy='startTime').execute()
+        events = events_result.get('items', [])
+        if not events:
+            print('No upcoming events found.')
+        event1 = events[0]
+        event2 = events[1]
+        event3 = events[2]
+        event4 = events[3]
+        #event 1
+        datePullOne = self.getDate(event1)
+        locationPullOne = self.geteventLocation(event1)
+        eventNameOne = self.geteventName(event1)
+        timeFinalOne = self.getTime(event1)
+        #event 2
+        datePull2 = self.getDate(event2)
+        locationPull2 = self.geteventLocation(event2)
+        eventName2 = self.geteventName(event2)
+        timeFinal2 = self.getTime(event2)
+        #event 3
+        datePull3 = self.getDate(event3)
+        locationPull3 = self.geteventLocation(event3)
+        eventName3 = self.geteventName(event3)
+        timeFinal3 = self.getTime(event3)
+        #event 4
+        datePull4 = self.getDate(event4)
+        locationPull4 = self.geteventLocation(event4)
+        eventName4 = self.geteventName(event4)
+        timeFinal4 = self.getTime(event4)
+        #set statements
+        if self.dateItem != datePullOne:
+            self.dateItem = datePullOne
+            self.dateLable.config(text=datePullOne+"\n"+datePull2+"\n"+datePull3+"\n"+datePull4)
+        if self.timeItem != timeFinalOne:
+            self.timeItem = timeFinalOne
+            self.timeLable.config(text=timeFinalOne+"\n"+timeFinal2+"\n"+timeFinal3+"\n"+timeFinal4)
+        if self.calanderItem != eventNameOne:
+            self.calanderItem = eventNameOne
+            self.calanderLable.config(text=eventNameOne+"\n"+eventName2+"\n"+eventName3+"\n"+eventName4)
+        if self.locationName != locationPullOne[0]:
+            self.locationName = locationPullOne[0]
+            self.locationLable.config(text=locationPullOne+"\n"+locationPull2+"\n"+locationPull3+"\n"+locationPull4)
+        self.after(3600000, self.getCalander)
+    def geteventLocation(self,eventz):
+        location = eventz['location']
+        locationPul = location.split(",")
+        return "-"+locationPul[0]
+    def geteventName(self,eventz):
+        eventsName = eventz['summary']
+        return eventsName
+    def getDate(self,eventz):
+        start = eventz['start'].get('dateTime', eventz['start'].get('date'))
+        timePull = start.split("T")
+        date = timePull[0]
+        dateEdit = datetime.datetime.strptime(date,"%Y-%m-%d")
+        finalDate = dateEdit.strftime("%m/%d/%y")
+        return finalDate
+    def getTime(self,eventz):
+        start = eventz['start'].get('dateTime', eventz['start'].get('date'))
+        end = eventz['end'].get('dateTime', eventz['end'].get('date'))
+        timePull = start.split("T")
+        d = datetime.datetime.strptime(timePull[1][:5], "%H:%M")
+        timeGet = d.strftime("%I:%M %p")
+        timePully = end.split("T")
+        b = datetime.datetime.strptime(timePully[1][:5], "%H:%M")
+        timeEndy = b.strftime("%I:%M %p")
+        timeFinal1 = timeGet + "-" + timeEndy + ","
+        return timeFinal1
+
 
 class FullScreen():
 
@@ -242,9 +346,12 @@ class FullScreen():
         #width = self.topFrame.get_rect().width
         height = self.tk.winfo_screenheight()/2
         self.state = False
-        #calander
-        self.calanderThing = Calander(self.bottomFrame)
+        #CalanderMuhammad
+        self.calanderThing = CalanderMuhammad(self.bottomFrame)
         self.calanderThing.pack(side=TOP,anchor='center', pady=40)
+        #CalanderIan
+        self.calanderThingIan = CalanderIan(self.bottomFrame)
+        self.calanderThingIan.pack(side=TOP,anchor='center', pady=40)
         #Message icon
         self.messagesThing = Messages(self.topFrame)
         #self.messagesThing.place(x=575,y=450)
