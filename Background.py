@@ -61,7 +61,7 @@ class Weather(Frame):
         self.maxLbl=Label(self.mFrame, font=('Helvetica', 20), fg="white", bg="black")
         self.maxLbl.pack(side=BOTTOM, anchor=S)
         #Foracast Lable Creation
-        self.forecastLbl = Label(self, font=('Helvetica', 18), fg="white", bg="black")
+        self.forecastLbl = Label(self, font=('Helvetica', 16), fg="white", bg="black")
         self.forecastLbl.pack(side=TOP, anchor=W)
         #Sunset creation
         self.sunsetLbl = Label(self, font=('Helvetica', 17), fg="white", bg="black")
@@ -106,22 +106,22 @@ class Messages(Frame):
         self.message = ''
         self.messageNumber = 0
         self.messageLable=Label(self, font=('Helvetica', 50), fg="white", bg="black")
-        self.messageLable.pack(side=BOTTOM, anchor=S)
+        self.messageLable.pack(side=TOP, anchor=N)
         self.get_messages()
     def get_messages(self):
-      #  with open('Hourly Messages.csv', 'rU') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
-       #     reader = csv.reader(csv_file)
-        #    messages = []
-         #   for line in reader:
-          #      line="".join(line)
-           #     messages.append(line)
-           # if "hello" != self.message:
-            #    self.message = messages[self.messageNumber]
-             #   rmMess = messages[self.messageNumber]
-              #  self.messageLable.config(text=rmMess)
-               # self.messageNumber +=1
-               # if self.messageNumber == 4:
-                #    self.messageNumber = 0
+        with open('Hourly_Messages.csv', 'rU') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+            reader = csv.reader(csv_file)
+            messages = []
+            for line in reader:
+                line="".join(line)
+                messages.append(line)
+            if "hello" != self.message:
+                self.message = messages[self.messageNumber]
+                rmMess = messages[self.messageNumber]
+                self.messageLable.config(text=rmMess)
+                self.messageNumber +=1
+                if self.messageNumber == 4:
+                    self.messageNumber = 0
             self.after(50000, self.get_messages)
 
 class Calander(Frame):
@@ -248,7 +248,7 @@ class FullScreen():
         #Message icon
         self.messagesThing = Messages(self.topFrame)
         #self.messagesThing.place(x=575,y=450)
-        self.messagesThing.pack(side=BOTTOM, anchor=N, pady=20)
+        self.messagesThing.pack(side=BOTTOM, anchor=N, pady=50)
         #clock
         self.clock = Clock(self.topFrame)
         self.clock.pack(side=RIGHT, anchor=N, padx=100, pady=60)
