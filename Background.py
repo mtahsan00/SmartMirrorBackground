@@ -9,6 +9,7 @@ import time
 import requests
 import csv
 import textwrap
+import sys
 
 # root = Tk()
 # lab = Label(root)
