@@ -1,5 +1,6 @@
 from __future__ import print_function
 from tkinter import *
+import tkinter
 from apiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file as oauth_file, client, tools
@@ -7,9 +8,9 @@ import datetime
 import time
 import requests
 import csv
+import textwrap
 
 # root = Tk()
-#
 # lab = Label(root)
 # dateDisplay = Label(root)
 class Clock(Frame):
@@ -18,6 +19,29 @@ class Clock(Frame):
         self.time1=''
         self.timeLbl = Label(self, font=('Helvetica', 48), fg="white", bg="black")
         self.timeLbl.pack(side=TOP, anchor=E)
+        self.dayWeek = ''
+        self.dayLbl = Label(self, text=self.dayWeek, font=('Helvetica', 18), fg="white", bg="black")
+        self.dayLbl.pack(side=TOP, anchor=E)
+        self.tick()
+
+    def tick(self):
+        time = datetime.datetime.now().strftime("%I:%M:%S %p")
+        date = datetime.datetime.today().strftime('%A %B,%d')
+        if time != self.time1:
+            self.time1 = time
+            self.timeLbl.config(text=time)
+        if date != self.dayWeek:
+            self.dayWeek = date
+            self.dayLbl.config(text=date)
+
+        self.timeLbl.after(200, self.tick)
+
+class ClockBig(Frame):
+    def __init__(self,parent,*args,**kwargs):
+        Frame.__init__(self,parent,bg='black')
+        self.time1=''
+        self.timeLbl = Label(self, font=('Helvetica', 100), fg="white", bg="black")
+        self.timeLbl.pack(side=TOP, anchor=N)
         self.dayWeek = ''
         self.dayLbl = Label(self, text=self.dayWeek, font=('Helvetica', 18), fg="white", bg="black")
         self.dayLbl.pack(side=TOP, anchor=E)
@@ -67,12 +91,12 @@ class Weather(Frame):
         self.sunsetLbl = Label(self, font=('Helvetica', 17), fg="white", bg="black")
         self.sunsetLbl.pack(side=TOP, anchor=W)
         #City Lable creation
-        self.cityLbl = Label(self, text="Minneapolis,MN", font=('Helvetica', 18), fg="white", bg="black")
+        self.cityLbl = Label(self, text="Maple Grove,MN", font=('Helvetica', 18), fg="white", bg="black")
         self.cityLbl.pack(side=TOP, anchor=W)
 
         self.get_weather()
     def get_weather(self):
-        api_address="http://api.openweathermap.org/data/2.5/weather?appid=0267fed153829b1bcacdf19682b24b4d&q=Minneapolis&units=imperial"
+        api_address="http://api.openweathermap.org/data/2.5/weather?appid=0267fed153829b1bcacdf19682b24b4d&q=Maple&Grove&units=imperial"
         jason_data=requests.get(api_address).json()
         weatherType = jason_data['weather'][0]["description"]
         degree_sign= u'\N{DEGREE SIGN}'
@@ -104,12 +128,12 @@ class Messages(Frame):
     def __init__(self,parent,*args,**kwargs):
         Frame.__init__(self,parent,bg='black')
         self.message = ''
-        self.messageNumber = 0
-        self.messageLable=Label(self, font=('Helvetica', 50), fg="white", bg="black")
+        self.messageNumber = 1
+        self.messageLable=Label(self, font=('Helvetica', 20), fg="white", bg="black")
         self.messageLable.pack(side=TOP, anchor=N)
         self.get_messages()
     def get_messages(self):
-        with open('Hourly_Messages.csv', 'rU') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+        with open('1000CommonN8.csv', 'r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
             reader = csv.reader(csv_file)
             messages = []
             for line in reader:
@@ -118,11 +142,33 @@ class Messages(Frame):
             if "hello" != self.message:
                 self.message = messages[self.messageNumber]
                 rmMess = messages[self.messageNumber]
-                self.messageLable.config(text=rmMess)
+                api_address="http://api.urbandictionary.com/v0/define?term={}".format({rmMess})
+                jason_data=requests.get(api_address).json()
+                definition = jason_data['list'][0]["definition"]
+                example = jason_data['list'][0]["example"]
+                if len(definition) > 10:
+                    wrapped = textwrap.fill(definition, 100)
+                    fullCombo ="\""+ rmMess + "\"" + ":"+ wrapped +"\n" + "example:"+"\n" + example
+                    self.messageLable.config(text=fullCombo)
+                else:
+                    fullCombo ="\""+ rmMess + "\"" + definition +"\n" + "example:"+"\n" + example
+                    self.messageLable.config(text=fullCombo)
                 self.messageNumber +=1
-                if self.messageNumber == 4:
+                if self.messageNumber == 1000:
                     self.messageNumber = 0
             self.after(50000, self.get_messages)
+    def get_urban(self):
+        word = "dead"
+        api_address="http://api.urbandictionary.com/v0/define?term={}".format({word})
+        print(api_address)
+        jason_data=requests.get(api_address).json()
+        definition = jason_data['list'][0]["definition"]
+        if definition != self.message:
+            self.message = definition
+            if len(definition) >10:
+                wrapped = textwrap.fill(definition, 100)
+            self.messageLable.config(text=wrapped)
+        #print(definition)
 
 class CalanderMuhammad(Frame):
     def __init__(self,parent,*args,**kwargs):
@@ -335,39 +381,66 @@ class CalanderIan(Frame):
 
 class FullScreen():
 
+    def calanderStart(self):
+        self.calanderThing = CalanderMuhammad(self.bottomFrame)
+        self.calanderThing.pack(side=TOP,anchor='center', pady=40)
+        #CalanderIan
+    #    self.calanderThingIan = CalanderIan(self.bottomFrame)
+    #    self.calanderThingIan.pack(side=TOP,anchor='center', pady=40)
+        #Message icon
+        self.messagesThing = Messages(self.topFrame)
+        #self.messagesThing.place(x=575,y=450)
+        self.messagesThing.pack(side=BOTTOM, anchor=N, pady=50)
+        #clock
+        self.clock = Clock(self.topFrame,size=80)
+        self.clock.pack(side=RIGHT, anchor=N, padx=100, pady=60)
+        #weather
+        self.weather = Weather(self.topFrame)
+        self.weather.pack(side=LEFT, anchor=N, padx=100, pady=60)
+
+        def onClick():
+            print("hello")
 
     def __init__(self):
+        time = datetime.datetime.now().strftime("%I:%M %p")
         self.tk = Tk()
         self.tk.configure(background='black')
         self.topFrame = Frame(self.tk, background = 'black')
         self.bottomFrame = Frame(self.tk, background = 'black')
         self.topFrame.pack(side = TOP, fill=BOTH, expand = YES)
         self.bottomFrame.pack(side = BOTTOM, fill=BOTH, expand = YES)
-        #width = self.topFrame.get_rect().width
-        height = self.tk.winfo_screenheight()/2
-        self.state = False
-        #CalanderMuhammad
         self.calanderThing = CalanderMuhammad(self.bottomFrame)
         self.calanderThing.pack(side=TOP,anchor='center', pady=40)
         #CalanderIan
-        self.calanderThingIan = CalanderIan(self.bottomFrame)
-        self.calanderThingIan.pack(side=TOP,anchor='center', pady=40)
+    #    self.calanderThingIan = CalanderIan(self.bottomFrame)
+    #    self.calanderThingIan.pack(side=TOP,anchor='center', pady=40)
         #Message icon
         self.messagesThing = Messages(self.topFrame)
         #self.messagesThing.place(x=575,y=450)
         self.messagesThing.pack(side=BOTTOM, anchor=N, pady=50)
         #clock
-        self.clock = Clock(self.topFrame)
+        self.clock = Clock(self.topFrame,size=80)
         self.clock.pack(side=RIGHT, anchor=N, padx=100, pady=60)
         #weather
         self.weather = Weather(self.topFrame)
         self.weather.pack(side=LEFT, anchor=N, padx=100, pady=60)
+
+    #    b = Button(self.topFrame, text="Hell World").pack(padx="10", pady="10", command =self.calanderStart() )
+        #width = self.topFrame.get_rect().width
+        height = self.tk.winfo_screenheight()/2
+        self.state = False
+        #CalanderMuhammad
+        #self.after(60000, self.__init__)
     # run first time
+        # if time == "10:09 PM":
+        #     self.clock = ClockBig(self.topFrame,size=80)
+        #     self.clock.pack(side=TOP, anchor=N, padx=100, pady=60)
+        #     #self.after(60000, self.__init__)
 # clock()
 if __name__ == '__main__':
     w = FullScreen()
     w.tk.geometry("1080x1700")
-    w.tk.attributes("-type","dock")
+#    w.tk.attributes("-type","dock")
     w.tk.mainloop()
 #
 # root.configure(background='black')
