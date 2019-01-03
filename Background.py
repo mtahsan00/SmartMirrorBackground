@@ -130,11 +130,11 @@ class Messages(Frame):
         Frame.__init__(self,parent,bg='black')
         self.message = ''
         self.messageNumber = 1
-        self.messageLable=Label(self, font=('Helvetica', 20), fg="white", bg="black")
+        self.messageLable=Label(self, font=('Helvetica', 50), fg="white", bg="black")
         self.messageLable.pack(side=TOP, anchor=N)
         self.get_messages()
     def get_messages(self):
-        with open('1000CommonN8.csv', 'r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+        with open('1000Common8.csv', 'r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
             reader = csv.reader(csv_file)
             messages = []
             for line in reader:
@@ -150,14 +150,14 @@ class Messages(Frame):
                 if len(definition) > 10:
                     wrapped = textwrap.fill(definition, 100)
                     fullCombo ="\""+ rmMess + "\"" + ":"+ wrapped +"\n" + "example:"+"\n" + example
-                    self.messageLable.config(text=fullCombo)
+                    self.messageLable.config(text="It's a Trap")
                 else:
                     fullCombo ="\""+ rmMess + "\"" + definition +"\n" + "example:"+"\n" + example
                     self.messageLable.config(text=fullCombo)
                 self.messageNumber +=1
                 if self.messageNumber == 1000:
                     self.messageNumber = 0
-            self.after(50000, self.get_messages)
+            self.after(43200000, self.get_messages)
     def get_urban(self):
         word = "dead"
         api_address="http://api.urbandictionary.com/v0/define?term={}".format({word})
@@ -441,7 +441,7 @@ class FullScreen():
 if __name__ == '__main__':
     w = FullScreen()
     w.tk.geometry("1080x1700")
-#    w.tk.attributes("-type","dock")
+    w.tk.attributes("-type","dock")
     w.tk.mainloop()
 #
 # root.configure(background='black')
