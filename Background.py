@@ -18,7 +18,7 @@ class Clock(Frame):
     def __init__(self,parent,*args,**kwargs):
         Frame.__init__(self,parent,bg='black')
         self.time1=''
-        self.timeLbl = Label(self, font=('Helvetica', 48), fg="white", bg="black")
+        self.timeLbl = Label(self, font=('Helvetica', 47), fg="white", bg="black")
         self.timeLbl.pack(side=TOP, anchor=E)
         self.dayWeek = ''
         self.dayLbl = Label(self, text=self.dayWeek, font=('Helvetica', 18), fg="white", bg="black")
