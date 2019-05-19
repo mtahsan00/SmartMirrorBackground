@@ -129,8 +129,8 @@ class Messages(Frame):
     def __init__(self,parent,*args,**kwargs):
         Frame.__init__(self,parent,bg='black')
         self.message = ''
-        self.messageNumber = 4
-        self.messageLable=Label(self, font=('Helvetica', 40), fg="white", bg="black")
+        self.messageNumber = 1
+        self.messageLable=Label(self, font=('Helvetica', 15), fg="white", bg="black")
         self.messageLable.pack(side=TOP, anchor=N)
         self.get_messages()
     def get_messages(self):
@@ -150,11 +150,10 @@ class Messages(Frame):
                 if len(definition) > 10:
                     wrapped = textwrap.fill(definition, 100)
                     fullCombo ="\""+ rmMess + "\"" + ":"+ wrapped +"\n" + "example:"+"\n" + example
-                    self.messageLable.config(text="Hom")
-                    self.messageNumber+=1
+                    self.messageLable.config(text=fullCombo)
                 else:
                     fullCombo ="\""+ rmMess + "\"" + definition +"\n" + "example:"+"\n" + example
-                    self.messageLable.config(text="Hom")
+                    self.messageLable.config(text=fullCombo)
                 self.messageNumber +=1
                 if self.messageNumber == 1000:
                     self.messageNumber = 0
@@ -169,7 +168,7 @@ class Messages(Frame):
             self.message = definition
             if len(definition) >10:
                 wrapped = textwrap.fill(definition, 100)
-            self.messageLable.config(text="Happy Birthday!")
+            self.messageLable.config(text=wrapped)
         #print(definition)
 
 class CalanderMuhammad(Frame):
@@ -387,8 +386,8 @@ class FullScreen():
         self.calanderThing = CalanderMuhammad(self.bottomFrame)
         self.calanderThing.pack(side=TOP,anchor='center', pady=40)
         #CalanderIan
-        self.calanderThingIan = CalanderIan(self.bottomFrame)
-        self.calanderThingIan.pack(side=TOP,anchor='center', pady=40)
+    #    self.calanderThingIan = CalanderIan(self.bottomFrame)
+    #    self.calanderThingIan.pack(side=TOP,anchor='center', pady=40)
         #Message icon
         self.messagesThing = Messages(self.topFrame)
         #self.messagesThing.place(x=575,y=450)
@@ -414,8 +413,8 @@ class FullScreen():
         self.calanderThing = CalanderMuhammad(self.bottomFrame)
         self.calanderThing.pack(side=TOP,anchor='center', pady=40)
         #CalanderIan
-#        self.calanderThingIan = CalanderIan(self.bottomFrame)
-#        self.calanderThingIan.pack(side=TOP,anchor='center', pady=40)
+    #    self.calanderThingIan = CalanderIan(self.bottomFrame)
+    #    self.calanderThingIan.pack(side=TOP,anchor='center', pady=40)
         #Message icon
         self.messagesThing = Messages(self.topFrame)
         #self.messagesThing.place(x=575,y=450)
