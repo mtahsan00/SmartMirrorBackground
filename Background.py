@@ -129,36 +129,51 @@ class Messages(Frame):
     def __init__(self,parent,*args,**kwargs):
         Frame.__init__(self,parent,bg='black')
         self.message = ''
-        self.messageNumber = 4
+        self.messageNumber = 1
         self.messageLable=Label(self, font=('Helvetica', 40), fg="white", bg="black")
         self.messageLable.pack(side=TOP, anchor=N)
         self.get_messages()
     def get_messages(self):
-        with open('1000Common8.csv', 'r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+        with open('Hourly Messages.csv','r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
             reader = csv.reader(csv_file)
             messages = []
             for line in reader:
-                line="".join(line)
                 messages.append(line)
-            if "hello" != self.message:
-                self.message = messages[self.messageNumber]
-                rmMess = messages[self.messageNumber]
-                api_address="http://api.urbandictionary.com/v0/define?term={}".format({rmMess})
-                jason_data=requests.get(api_address).json()
-                definition = jason_data['list'][0]["definition"]
-                example = jason_data['list'][0]["example"]
-                if len(definition) > 10:
-                    wrapped = textwrap.fill(definition, 100)
-                    fullCombo ="\""+ rmMess + "\"" + ":"+ wrapped +"\n" + "example:"+"\n" + example
-                    self.messageLable.config(text="Hom")
-                    self.messageNumber+=1
-                else:
-                    fullCombo ="\""+ rmMess + "\"" + definition +"\n" + "example:"+"\n" + example
-                    self.messageLable.config(text="Hom")
-                self.messageNumber +=1
-                if self.messageNumber == 1000:
-                    self.messageNumber = 0
+            if True:
+                self.message = messages[self.messageNumber][0]
+                print(messages[self.messageNumber][0])
+                self.messageNumber+=1
+            if len(self.message)>10:
+                wrapped = textwrap.fill(self.message,100)
+                self.messageLable.config(text=wrapped)
+            else:
+                self.messageLable.config(text=self.message)
             self.after(43200000, self.get_messages)
+        # with open('1000Common8.csv', 'r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+        #     reader = csv.reader(csv_file)
+        #     messages = []
+        #     for line in reader:
+        #         line="".join(line)
+        #         messages.append(line)
+        #     if "hello" != self.message:
+        #         self.message = messages[self.messageNumber]
+        #         rmMess = messages[self.messageNumber]
+        #         api_address="http://api.urbandictionary.com/v0/define?term={}".format({rmMess})
+        #         jason_data=requests.get(api_address).json()
+        #         definition = jason_data['list'][0]["definition"]
+        #         example = jason_data['list'][0]["example"]
+        #         if len(definition) > 10:
+        #             wrapped = textwrap.fill(definition, 100)
+        #             fullCombo ="\""+ rmMess + "\"" + ":"+ wrapped +"\n" + "example:"+"\n" + example
+        #             self.messageLable.config(text="Hom")
+        #             self.messageNumber+=1
+        #         else:
+        #             fullCombo ="\""+ rmMess + "\"" + definition +"\n" + "example:"+"\n" + example
+        #             self.messageLable.config(text="Hom")
+        #         self.messageNumber +=1
+        #         if self.messageNumber == 1000:
+        #             self.messageNumber = 0
+        #     self.after(43200000, self.get_messages)
     def get_urban(self):
         word = "dead"
         api_address="http://api.urbandictionary.com/v0/define?term={}".format({word})
@@ -442,7 +457,7 @@ class FullScreen():
 if __name__ == '__main__':
     w = FullScreen()
     w.tk.geometry("1080x1700")
-    w.tk.attributes("-type","dock")
+    #w.tk.attributes("-type","dock")
     w.tk.mainloop()
 #
 # root.configure(background='black')
