@@ -146,8 +146,8 @@ class Messages(Frame):
         with open('Hourly_MessagesH.csv','r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
             readery = csv.reader(csv_file)
             if(self.messageNumber<=len(self.messages)-1):
-               self.message = "Your mom is what now?"
-             #  self.message = self.messages[self.messageNumber][0]
+               #self.message = "Your mom is what now?"
+               self.message = self.messages[self.messageNumber][0]
             else:
                self.message = 'End of Messages'
             self.messageNumber+=1
