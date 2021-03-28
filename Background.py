@@ -139,7 +139,7 @@ class Messages(Frame):
             reader = csv.reader(csv_file)
             for line in reader:
                 self.messages.append(line)
-                print(line)
+                #print(line)
         random.shuffle(self.messages)
         with open('Motivation_QuotesH.csv','r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
             reader = csv.reader(csv_file)
