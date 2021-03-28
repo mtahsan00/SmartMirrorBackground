@@ -134,22 +134,29 @@ class Messages(Frame):
         self.messageLable=Label(self, font=('Helvetica', 40), fg="white", bg="black")
         self.messageLable.pack(side=TOP, anchor=N)
         self.messages = []
+        self.motivational_quotes = []
         with open('Hourly_MessagesH.csv','r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
             reader = csv.reader(csv_file)
             for line in reader:
                 self.messages.append(line)
-                print(line)
+                #print(line)
         random.shuffle(self.messages)
+        with open('Motivation_QuotesH.csv','r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+            reader = csv.reader(csv_file)
+            for line in reader:
+                self.motivational_quotes.append(line)
+        random.shuffle(self.motivational_quotes)
         self.get_messages()
     def get_messages(self):
-        randomNums = [10000000]
-        with open('Hourly_MessagesH.csv','r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+        with open('Hourly_MessagesH.csv','r') as csv_file: #Get rid of this eventually. This has become redundant
             readery = csv.reader(csv_file)
             if(self.messageNumber<=len(self.messages)-1):
                self.message = "Happy St.Patty's day. Take a phat drink or 2 shots if you see this"
               # self.message = self.messages[self.messageNumber][0]
             else:
-               self.message = 'End of Messages'
+               self.message = 'Looks like only Seth gave us quotes. To fill the space welcome to a combination of pintrest and the minutiae of my mind. Guess which is which'
+               self.messages = self.motivational_quotes
+               self.messageNumber = 0
             self.messageNumber+=1
                 #print(messages[self.messageNumber][0])
                 #self.messageNumber+=1
