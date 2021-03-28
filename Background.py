@@ -151,8 +151,8 @@ class Messages(Frame):
         with open('Hourly_MessagesH.csv','r') as csv_file: #Get rid of this eventually. This has become redundant
             readery = csv.reader(csv_file)
             if(self.messageNumber<=len(self.messages)-1):
-               self.message = "Happy St.Patty's day. Take a phat drink or 2 shots if you see this"
-              # self.message = self.messages[self.messageNumber][0]
+               #self.message = "Happy St.Patty's day. Take a phat drink or 2 shots if you see this"
+               self.message = self.messages[self.messageNumber][0]
             else:
                self.message = 'Looks like only Seth gave us quotes. To fill the space welcome to a combination of pintrest and the minutiae of my mind. Guess which is which'
                self.messages = self.motivational_quotes
