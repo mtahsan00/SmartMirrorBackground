@@ -165,6 +165,7 @@ class Messages(Frame):
             for i in range(self.lineNumber-1,len(values)):
                 for j in range(1,len(values[i])):
                     self.messages.append(values[i][j])
+                    print(values[i][j])
                 self.lineNumber+=1
         if(self.messageNumber<=len(self.messages)-1):
            #self.message = "Happy St.Patty's day. Take a phat drink or 2 shots if you see this"
