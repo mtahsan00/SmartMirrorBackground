@@ -161,17 +161,20 @@ class Messages(Frame):
         self.result = self.sheet.values().get(spreadsheetId=self.SAMPLE_SPREADSHEET_ID,
                                     range=self.SAMPLE_RANGE_NAME).execute()
         values = self.result.get('values', [])
-        print(len(values))
         if(len(values)>self.lineNumber):
             for i in range(self.lineNumber-1,len(values)):
                 for j in range(1,len(values[i])):
                     self.messages.append(values[i][j])
                     print(values[i][j])
                 self.lineNumber+=1
-        if(self.messageNumber<=len(self.messages)-1):
+            self.lineNumber-=1
+        print(self.lineNumber)
+        random.shuffle(self.messages)
+        if(len(self.messages)>0):
            #self.message = "Happy St.Patty's day. Take a phat drink or 2 shots if you see this"
-           self.message = self.messages[self.messageNumber]
-           self.messageNumber+=1
+           self.message = self.messages[0]
+           self.messages.pop(0)
+           #self.messageNumber+=1
         else:
            self.message = 'Hungry For More Messages :)'
                 #print(messages[self.messageNumber][0])
