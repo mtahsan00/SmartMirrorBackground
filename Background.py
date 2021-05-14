@@ -137,7 +137,7 @@ class Messages(Frame):
         self.SAMPLE_RANGE_NAME = "Form Responses 1"
         self.SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
         self.creds = Credentials.from_authorized_user_file('token.json', self.SCOPES)
-        self.service = build('sheets', 'v4', credentials=creds)
+        self.service = build('sheets', 'v4', credentials=self.creds)
         self.message = ''
         self.messageNumber = 0
         self.lineNumber = 20
