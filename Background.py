@@ -157,9 +157,9 @@ class Messages(Frame):
         #         self.motivational_quotes.append(line)
         # random.shuffle(self.motivational_quotes)
     def get_messages(self):
-        self.sheet = service.spreadsheets()
-        self.result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                                    range="Form Responses 1").execute()
+        self.sheet = self.service.spreadsheets()
+        self.result = self.sheet.values().get(spreadsheetId=self.SAMPLE_SPREADSHEET_ID,
+                                    range=self.SAMPLE_RANGE_NAME).execute()
         values = result.get('values', [])
         if(len(values)<self.lineNumber):
             for i in range(self.lineNumber-1,len(values)):
