@@ -135,7 +135,8 @@ class Messages(Frame):
         Frame.__init__(self,parent,bg='black')
         self.SAMPLE_SPREADSHEET_ID = '1CB5v25TsFs1pffgv1gMjg1WjxM6YbdmuggUwHFOsJMA'
         self.SAMPLE_RANGE_NAME = "Form Responses 1"
-        self.creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        self.SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+        self.creds = Credentials.from_authorized_user_file('token.json', self.SCOPES)
         self.service = build('sheets', 'v4', credentials=creds)
         self.message = ''
         self.messageNumber = 0
