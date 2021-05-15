@@ -11,7 +11,11 @@ import csv
 import textwrap
 import sys
 import random
-
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+import os.path
 # root = Tk()
 # lab = Label(root)
 # dateDisplay = Label(root)
@@ -129,82 +133,54 @@ class Weather(Frame):
 class Messages(Frame):
     def __init__(self,parent,*args,**kwargs):
         Frame.__init__(self,parent,bg='black')
+        self.SAMPLE_SPREADSHEET_ID = '1CB5v25TsFs1pffgv1gMjg1WjxM6YbdmuggUwHFOsJMA'
+        self.SAMPLE_RANGE_NAME = "Form Responses 1"
+        self.creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        self.service = build('sheets', 'v4', credentials=creds)
         self.message = ''
         self.messageNumber = 0
+        self.lineNumber = 20
         self.messageLable=Label(self, font=('Helvetica', 40), fg="white", bg="black")
         self.messageLable.pack(side=TOP, anchor=N)
         self.messages = []
-        self.motivational_quotes = []
-        with open('Hourly_MessagesH.csv','r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
-            reader = csv.reader(csv_file)
-            for line in reader:
-                self.messages.append(line)
-                #print(line)
-        random.shuffle(self.messages)
-        with open('Motivation_QuotesH.csv','r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
-            reader = csv.reader(csv_file)
-            for line in reader:
-                self.motivational_quotes.append(line)
-        random.shuffle(self.motivational_quotes)
         self.get_messages()
+        # with open('Hourly_MessagesH.csv','r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+        #     reader = csv.reader(csv_file)
+        #     for line in reader:
+        #         self.messages.append(line)
+        #         #print(line)
+        # random.shuffle(self.messages)
+        # with open('Motivation_QuotesH.csv','r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+        #     reader = csv.reader(csv_file)
+        #     for line in reader:
+        #         self.motivational_quotes.append(line)
+        # random.shuffle(self.motivational_quotes)
     def get_messages(self):
-        with open('Hourly_MessagesH.csv','r') as csv_file: #Get rid of this eventually. This has become redundant
-            readery = csv.reader(csv_file)
-            if(self.messageNumber<=len(self.messages)-1):
-               #self.message = "Happy St.Patty's day. Take a phat drink or 2 shots if you see this"
-               self.message = self.messages[self.messageNumber][0]
-            else:
-               self.message = 'I am going to run'
-               self.messages = self.motivational_quotes
-               self.messageNumber = 0
-            self.messageNumber+=1
+        self.sheet = service.spreadsheets()
+        self.result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
+                                    range="Form Responses 1").execute()
+        values = result.get('values', [])
+        if(len(values)<self.lineNumber):
+            for i in range(self.lineNumber-1,len(values)):
+                for j in range(1,len(values[i])):
+                    self.messages.append(values[i][j])
+                self.lineNumber+=1
+        if(self.messageNumber<=len(self.messages)-1):
+           #self.message = "Happy St.Patty's day. Take a phat drink or 2 shots if you see this"
+           self.message = self.messages[self.messageNumber]
+           self.messageNumber+=1
+        else:
+           self.message = 'Hungry For More Messages :)'
                 #print(messages[self.messageNumber][0])
                 #self.messageNumber+=1
                 #self.message = "Hello My name is Tayyab And I am here to hell you!"
                 #self.message = "Humans are deutorosomes: after fertilization and the cells begin to divide to form a blastula, a concave hole forms, and that is our asshole. Everyone starts out as an asshole. Only some choose not to continue to be one."
-            if len(self.message)>40:
-                wrapped = textwrap.fill(self.message,70)
-                self.messageLable.config(text=wrapped,font=('Helvetica',25))
-            else:
-                self.messageLable.config(text=self.message)
-            self.after(43200000, self.get_messages)
-        # with open('1000Common8.csv', 'r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
-        #     reader = csv.reader(csv_file)
-        #     messages = []
-        #     for line in reader:
-        #         line="".join(line)
-        #         messages.append(line)
-        #     if "hello" != self.message:
-        #         self.message = messages[self.messageNumber]
-        #         rmMess = messages[self.messageNumber]
-        #         api_address="http://api.urbandictionary.com/v0/define?term={}".format({rmMess})
-        #         jason_data=requests.get(api_address).json()
-        #         definition = jason_data['list'][0]["definition"]
-        #         example = jason_data['list'][0]["example"]
-        #         if len(definition) > 10:
-        #             wrapped = textwrap.fill(definition, 100)
-        #             fullCombo ="\""+ rmMess + "\"" + ":"+ wrapped +"\n" + "example:"+"\n" + example
-        #             self.messageLable.config(text="Hom")
-        #             self.messageNumber+=1
-        #         else:
-        #             fullCombo ="\""+ rmMess + "\"" + definition +"\n" + "example:"+"\n" + example
-        #             self.messageLable.config(text="Hom")
-        #         self.messageNumber +=1
-        #         if self.messageNumber == 1000:
-        #             self.messageNumber = 0
-        #     self.after(43200000, self.get_messages)
-    def get_urban(self):
-        word = "dead"
-        api_address="http://api.urbandictionary.com/v0/define?term={}".format({word})
-        print(api_address)
-        jason_data=requests.get(api_address).json()
-        definition = jason_data['list'][0]["definition"]
-        if definition != self.message:
-            self.message = definition
-            if len(definition) >10:
-                wrapped = textwrap.fill(definition, 100)
-            self.messageLable.config(text="Happy Birthday!")
-        #print(definition)
+        if len(self.message)>40:
+            wrapped = textwrap.fill(self.message,70)
+            self.messageLable.config(text=wrapped,font=('Helvetica',25))
+        else:
+            self.messageLable.config(text=self.message)
+        self.after(43200000, self.get_messages)
 
 class CalanderMuhammad(Frame):
     def __init__(self,parent,*args,**kwargs):

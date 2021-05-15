@@ -10,6 +10,7 @@ import requests
 import csv
 import textwrap
 import sys
+import random
 
 # root = Tk()
 # lab = Label(root)
@@ -18,7 +19,7 @@ class Clock(Frame):
     def __init__(self,parent,*args,**kwargs):
         Frame.__init__(self,parent,bg='black')
         self.time1=''
-        self.timeLbl = Label(self, font=('Helvetica', 48), fg="white", bg="black")
+        self.timeLbl = Label(self, font=('Helvetica', 47), fg="white", bg="black")
         self.timeLbl.pack(side=TOP, anchor=E)
         self.dayWeek = ''
         self.dayLbl = Label(self, text=self.dayWeek, font=('Helvetica', 18), fg="white", bg="black")
@@ -92,12 +93,12 @@ class Weather(Frame):
         self.sunsetLbl = Label(self, font=('Helvetica', 17), fg="white", bg="black")
         self.sunsetLbl.pack(side=TOP, anchor=W)
         #City Lable creation
-        self.cityLbl = Label(self, text="Maple Grove,MN", font=('Helvetica', 18), fg="white", bg="black")
+        self.cityLbl = Label(self, text="Minneapolis,MN", font=('Helvetica', 18), fg="white", bg="black")
         self.cityLbl.pack(side=TOP, anchor=W)
 
         self.get_weather()
     def get_weather(self):
-        api_address="http://api.openweathermap.org/data/2.5/weather?appid=0267fed153829b1bcacdf19682b24b4d&q=Maple&Grove&units=imperial"
+        api_address="http://api.openweathermap.org/data/2.5/weather?appid=0267fed153829b1bcacdf19682b24b4d&q=Minneapolis&units=imperial"
         jason_data=requests.get(api_address).json()
         weatherType = jason_data['weather'][0]["description"]
         degree_sign= u'\N{DEGREE SIGN}'
@@ -129,35 +130,69 @@ class Messages(Frame):
     def __init__(self,parent,*args,**kwargs):
         Frame.__init__(self,parent,bg='black')
         self.message = ''
-        self.messageNumber = 1
-        self.messageLable=Label(self, font=('Helvetica', 15), fg="white", bg="black")
+        self.messageNumber = 0
+        self.messageLable=Label(self, font=('Helvetica', 40), fg="white", bg="black")
         self.messageLable.pack(side=TOP, anchor=N)
+        self.messages = []
+        self.motivational_quotes = []
+        with open('Hourly_MessagesH.csv','r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+            reader = csv.reader(csv_file)
+            for line in reader:
+                self.messages.append(line)
+                #print(line)
+        random.shuffle(self.messages)
+        with open('Motivation_QuotesH.csv','r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+            reader = csv.reader(csv_file)
+            for line in reader:
+                self.motivational_quotes.append(line)
+        random.shuffle(self.motivational_quotes)
         self.get_messages()
     def get_messages(self):
-        with open('1000Common8.csv', 'r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
-            reader = csv.reader(csv_file)
-            messages = []
-            for line in reader:
-                line="".join(line)
-                messages.append(line)
-            if "hello" != self.message:
-                self.message = messages[self.messageNumber]
-                rmMess = messages[self.messageNumber]
-                api_address="http://api.urbandictionary.com/v0/define?term={}".format({rmMess})
-                jason_data=requests.get(api_address).json()
-                definition = jason_data['list'][0]["definition"]
-                example = jason_data['list'][0]["example"]
-                if len(definition) > 10:
-                    wrapped = textwrap.fill(definition, 100)
-                    fullCombo ="\""+ rmMess + "\"" + ":"+ wrapped +"\n" + "example:"+"\n" + example
-                    self.messageLable.config(text=fullCombo)
-                else:
-                    fullCombo ="\""+ rmMess + "\"" + definition +"\n" + "example:"+"\n" + example
-                    self.messageLable.config(text=fullCombo)
-                self.messageNumber +=1
-                if self.messageNumber == 1000:
-                    self.messageNumber = 0
+        with open('Hourly_MessagesH.csv','r') as csv_file: #Get rid of this eventually. This has become redundant
+            readery = csv.reader(csv_file)
+            if(self.messageNumber<=len(self.messages)-1):
+               #self.message = "Happy St.Patty's day. Take a phat drink or 2 shots if you see this"
+               self.message = self.messages[self.messageNumber][0]
+            else:
+               self.message = 'I am going to run'
+               self.messages = self.motivational_quotes
+               self.messageNumber = 0
+            self.messageNumber+=1
+                #print(messages[self.messageNumber][0])
+                #self.messageNumber+=1
+                #self.message = "Hello My name is Tayyab And I am here to hell you!"
+                #self.message = "Humans are deutorosomes: after fertilization and the cells begin to divide to form a blastula, a concave hole forms, and that is our asshole. Everyone starts out as an asshole. Only some choose not to continue to be one."
+            if len(self.message)>40:
+                wrapped = textwrap.fill(self.message,70)
+                self.messageLable.config(text=wrapped,font=('Helvetica',25))
+            else:
+                self.messageLable.config(text=self.message)
             self.after(43200000, self.get_messages)
+        # with open('1000Common8.csv', 'r') as csv_file: #use "Hourly Messages" for windows and "Hourly_Messages" for raspberry pi's
+        #     reader = csv.reader(csv_file)
+        #     messages = []
+        #     for line in reader:
+        #         line="".join(line)
+        #         messages.append(line)
+        #     if "hello" != self.message:
+        #         self.message = messages[self.messageNumber]
+        #         rmMess = messages[self.messageNumber]
+        #         api_address="http://api.urbandictionary.com/v0/define?term={}".format({rmMess})
+        #         jason_data=requests.get(api_address).json()
+        #         definition = jason_data['list'][0]["definition"]
+        #         example = jason_data['list'][0]["example"]
+        #         if len(definition) > 10:
+        #             wrapped = textwrap.fill(definition, 100)
+        #             fullCombo ="\""+ rmMess + "\"" + ":"+ wrapped +"\n" + "example:"+"\n" + example
+        #             self.messageLable.config(text="Hom")
+        #             self.messageNumber+=1
+        #         else:
+        #             fullCombo ="\""+ rmMess + "\"" + definition +"\n" + "example:"+"\n" + example
+        #             self.messageLable.config(text="Hom")
+        #         self.messageNumber +=1
+        #         if self.messageNumber == 1000:
+        #             self.messageNumber = 0
+        #     self.after(43200000, self.get_messages)
     def get_urban(self):
         word = "dead"
         api_address="http://api.urbandictionary.com/v0/define?term={}".format({word})
@@ -168,7 +203,7 @@ class Messages(Frame):
             self.message = definition
             if len(definition) >10:
                 wrapped = textwrap.fill(definition, 100)
-            self.messageLable.config(text=wrapped)
+            self.messageLable.config(text="Happy Birthday!")
         #print(definition)
 
 class CalanderMuhammad(Frame):
@@ -386,8 +421,8 @@ class FullScreen():
         self.calanderThing = CalanderMuhammad(self.bottomFrame)
         self.calanderThing.pack(side=TOP,anchor='center', pady=40)
         #CalanderIan
-    #    self.calanderThingIan = CalanderIan(self.bottomFrame)
-    #    self.calanderThingIan.pack(side=TOP,anchor='center', pady=40)
+        self.calanderThingIan = CalanderIan(self.bottomFrame)
+        self.calanderThingIan.pack(side=TOP,anchor='center', pady=40)
         #Message icon
         self.messagesThing = Messages(self.topFrame)
         #self.messagesThing.place(x=575,y=450)
@@ -410,11 +445,11 @@ class FullScreen():
         self.bottomFrame = Frame(self.tk, background = 'black')
         self.topFrame.pack(side = TOP, fill=BOTH, expand = YES)
         self.bottomFrame.pack(side = BOTTOM, fill=BOTH, expand = YES)
-        self.calanderThing = CalanderMuhammad(self.bottomFrame)
-        self.calanderThing.pack(side=TOP,anchor='center', pady=40)
+       # self.calanderThing = CalanderMuhammad(self.bottomFrame)
+       # self.calanderThing.pack(side=TOP,anchor='center', pady=40)
         #CalanderIan
-    #    self.calanderThingIan = CalanderIan(self.bottomFrame)
-    #    self.calanderThingIan.pack(side=TOP,anchor='center', pady=40)
+#        self.calanderThingIan = CalanderIan(self.bottomFrame)
+#        self.calanderThingIan.pack(side=TOP,anchor='center', pady=40)
         #Message icon
         self.messagesThing = Messages(self.topFrame)
         #self.messagesThing.place(x=575,y=450)
